@@ -1,0 +1,24 @@
+{
+  "name": "battle_ship_js",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/x6iBeHbx/BattleshipJS.git"
+  },
+  "author": "Andrii Andriushchenko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/x6iBeHbx/BattleshipJS/issues"
+  },
+  "homepage": "https://github.com/x6iBeHbx/BattleshipJS#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "http": "0.0.0",
+    "phaser": "^2.6.2"
+  },
+  "description": ""
+}
