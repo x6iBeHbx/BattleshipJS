@@ -5,9 +5,8 @@ const positionY = 100;
 
 function preload() {
 
-     var img = game.load.image('area', 'assets/area.png');
-    img.crossOrigin = "Anonymous";
-     
+    var img = game.load.image('area', 'assets/area.png');
+    var miss = game.load.image('miss', 'assets/miss.png'); 
 }
 
 function create() {
@@ -24,6 +23,8 @@ function mouseClicked(sprite, pointer) {
 function calculateClickCoordinate(clickPosX, clickPosY){
     var x = Math.floor((clickPosX - positionX)/32);
     var y = Math.floor((clickPosY - positionY)/32);
+
+    game.add.sprite(positionX + (x*32), positionY + (y*32), "miss");
     alert('x:' + x.toString() + ' y:' + y.toString());
 }
 

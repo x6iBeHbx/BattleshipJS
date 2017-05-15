@@ -42,6 +42,11 @@ app.get('/assets/area.png', function(req, res){
     res.sendFile(f);
 });
 
+app.get('/assets/miss.png', function(req, res){
+    var miss = path.join(__dirname, "assets/miss.png");
+    res.sendFile(miss);
+});
+
 app.listen(port, function(){
     console.log("Running at Port " + port);
 });
