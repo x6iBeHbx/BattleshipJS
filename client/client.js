@@ -3,6 +3,8 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', {preload: preload, creat
 const positionX = 100;
 const positionY = 100;
 
+var area;
+
 function preload() {
 
     var img = game.load.image('area', 'assets/area.png');
@@ -10,7 +12,7 @@ function preload() {
 }
 
 function create() {
-    var area = game.add.sprite(positionX, positionY, 'area');
+    area = game.add.sprite(positionX, positionY, 'area');
     area.inputEnabled = true;
 
     area.events.onInputDown.add(mouseClicked, this);
@@ -24,7 +26,8 @@ function calculateClickCoordinate(clickPosX, clickPosY){
     var x = Math.floor((clickPosX - positionX)/32);
     var y = Math.floor((clickPosY - positionY)/32);
 
-    game.add.sprite(positionX + (x*32), positionY + (y*32), "miss");
+    area.addChild(game.make.sprite(x*32, y*32, 'miss'));
+    //area.add.sprite((x*32), (y*32), "miss");
     alert('x:' + x.toString() + ' y:' + y.toString());
 }
 
