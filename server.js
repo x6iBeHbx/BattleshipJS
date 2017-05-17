@@ -47,6 +47,16 @@ app.get('/assets/miss.png', function(req, res){
     res.sendFile(miss);
 });
 
+app.get('/assets/ship4.png', function(req, res){
+    var ship4img = path.join(__dirname, "assets/ship4.png");
+    res.sendFile(ship4img);
+});
+
+app.get('/assets/ship3.png', function(req, res){
+    var ship3img = path.join(__dirname, "assets/ship3.png");
+    res.sendFile(ship3img);
+});
+
 app.listen(port, function(){
     console.log("Running at Port " + port);
 });
