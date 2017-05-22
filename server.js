@@ -22,6 +22,8 @@ const port = 3030;
 //   console.log('Time:', Date.now());
 //   next();
 // });
+
+
 app.get('/', function(req, res){
     var filePath = path.join(__dirname, "index.html");
     res.sendFile(filePath);
@@ -35,6 +37,11 @@ app.get('/client/phaser.min.js', function(req, res){
 app.get('/client/client.js', function(req, res){
     var fp = path.join(__dirname, "client/client.js");
     res.sendFile(fp);
+});
+
+app.get('/client/const.js', function(req, res){
+    var constJS = path.join(__dirname, "client/const.js");
+    res.sendFile(constJS);
 });
 
 app.get('/assets/area.png', function(req, res){
@@ -55,6 +62,11 @@ app.get('/assets/ship4.png', function(req, res){
 app.get('/assets/ship3.png', function(req, res){
     var ship3img = path.join(__dirname, "assets/ship3.png");
     res.sendFile(ship3img);
+});
+
+app.get('/assets/ship2.png', function(req, res){
+    var ship2img = path.join(__dirname, "assets/ship2.png");
+    res.sendFile(ship2img);
 });
 
 app.listen(port, function(){

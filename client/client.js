@@ -1,79 +1,112 @@
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', {preload: preload, create:create});
-
-const positionX = 128;
-const positionY = 128;
-
-const ship4count = 1;
-const ship3count = 2;
-const ship2count = 3;
-const ship1count = 4;
-
-const ship4Length = 4;
-const ship3Length = 3;
-const ship2Length = 2;
-const ship1Length = 1;
-
-var areaMatrix = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]];
-
-var area;
-
-var ships;
-var tempShip4;
-var tempShip3;
+document.oncontextmenu = function (){return false};
+// ------------------ MAIN-------------------------------------
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create:create});
 
 function preload() {
-
-    var img = game.load.image('area', 'assets/area.png');
-    var miss = game.load.image('miss', 'assets/miss.png');
-    
-    game.load.image('ship4', 'assets/ship4.png');
-    game.load.image('ship3', 'assets/ship3.png');
+    // function use in this locate in "client.js"
+    loadBattleField();
+    loadFightAnim();
+    loadShipsImage();
 }
 
 function create() {
-    area = game.add.sprite(positionX, positionY, 'area');
-    area.inputEnabled = true;
+    addPrepareFieldToStage();
+    createShips();
+}
+// ------------------------------------------------------------
 
-    tempShip4 = game.add.sprite(500, 500, 'ship4');
-    tempShip4.inputEnabled = true;
-    tempShip4.events.onInputDown.add(tempShip4MouseDown, this);
-    tempShip4.events.onInputUp.add(tempShip4MouseUp, this);
-    tempShip4.isRotate = false;
-    //tempShip4.input.enableSnap(32, 32, false, true);
-    tempShip4.angle += 90;
-    tempShip4.isRotate = true;
+var playerBattleMatrix = [[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]];
 
-    tempShip3 = game.add.sprite(560, 560, 'ship3');
-    tempShip3.inputEnabled = true;
-    tempShip3.events.onInputDown.add(tempShip4MouseDown, this);
-    tempShip3.events.onInputUp.add(tempShip4MouseUp, this);
-    tempShip3.isRotate = false;
-    //tempShip4.input.enableSnap(32, 32, false, true);
+var prepareField;
 
-    area.events.onInputDown.add(mouseClicked, this);
+var ships;
+
+var ship4;
+var ship3_1;
+var ship3_1;
+var ship3_1;
+
+function loadBattleField(){
+    var img = game.load.image('area', 'assets/area.png');
 }
 
-function tempShip4MouseDown(sprite, pointer) {
+function loadFightAnim(){
+    var miss = game.load.image('miss', 'assets/miss.png');
+    var hit = game.load.image('hit', 'assets/hit.png');
+}
+
+function loadShipsImage(){
+    game.load.image('ship4', 'assets/ship4.png');
+    game.load.image('ship3', 'assets/ship3.png');
+    game.load.image('ship2', 'assets/ship2.png');
+    game.load.image('ship1', 'assets/ship1.png');
+}
+
+function addPrepareFieldToStage(){
+    prepareField = game.add.sprite(prepareFieldPosX, prepareFieldPosY, 'area');
+    prepareField.inputEnabled = true;
+}
+
+function createShips(){
+        
+        addShipToArea();
+
+        prepareField.events.onInputDown.add(mouseClicked, this);
+}
+
+function addShipToArea(){
+    ship4 = game.add.sprite(128 + 32*10 + 20, 128, 'ship4');
+    
+    ship3_1 = game.add.sprite(128 + 32*10 + 20, 128 + 32 + 20, 'ship3');
+    ship3_2 = game.add.sprite(128 + 32*10 + 32 * 3 + 40, 128 + 32 + 20, 'ship3');
+    
+    ship2_1 = game.add.sprite(128 + 32*10 + 20, 128 + 32*2 + 40, 'ship2');
+    ship2_2 = game.add.sprite(128 + 32*10 + 32 * 2 + 40, 128 + 32*2 + 40, 'ship2');
+    ship2_3 = game.add.sprite(128 + 32*10 + 32 * 4 + 60, 128 + 32*2 + 40, 'ship2');
+
+    ships = [ship4, ship3_1, ship3_2, ship2_1, ship2_2, ship2_3];
+
+    addLestenerToShips();
+}
+
+function addLestenerToShips(){
+
+    for(var i = 0; i < ships.length; i++){
+        ships[i].inputEnabled = true;
+        ships[i].events.onInputDown.add(onShipMouseDown, this);
+        ships[i].events.onInputUp.add(onShipMouseUp, this);
+        ships[i].isRotate = false;
+    }
+}
+
+
+
+function onShipMouseDown(sprite, pointer) {
     if(game.input.activePointer.leftButton.isDown){
         sprite.input.enableDrag();
     }else if(game.input.activePointer.rightButton.isDown){
+        sprite.input.disableDrag();
         if(sprite.isRotate == true){
+            sprite.anchor.setTo(0.5, 0);
             sprite.angle -= 90;
             sprite.isRotate = false;
-            sprite.x = sprite.x - 32;
+            sprite.x = sprite.x - 32; //use const
+            sprite.anchor.setTo(0);
         }else{
+            sprite.anchor.setTo(0, 0.5);
             sprite.angle += 90;
             sprite.isRotate = true;
-            sprite.x = sprite.x + 32;
+            sprite.x = sprite.x + 32;// use const
+            sprite.anchor.setTo(0);
         }
     }
 }
 
 
-function tempShip4MouseUp(sprite, pointer) {
-   
-    var x = Math.floor((sprite.x - positionX)/32);
-    var y = Math.floor((sprite.y - positionY)/32);
+function onShipMouseUp(sprite, pointer) {
+
+    var x = Math.floor((sprite.x - prepareFieldPosX)/32);
+    var y = Math.floor((sprite.y - prepareFieldPosY)/32);
 
     var spriteX;
     var spriteY;
@@ -82,7 +115,7 @@ function tempShip4MouseUp(sprite, pointer) {
     if(sprite.isRotate == true){
         spriteWidth = sprite.height;
         spriteHeight = sprite.width;
-        spriteX = sprite.x - spriteWidth;
+        spriteX = sprite.x - 32; // use const
         spriteY = sprite.y;
     }else {
         spriteWidth = sprite.width;
@@ -95,8 +128,8 @@ function tempShip4MouseUp(sprite, pointer) {
     if(spriteX >= 128 && spriteY >= 128 && (spriteX + spriteWidth) < (128 + 320 + 14) && (spriteY + spriteHeight) < (128 + 320 + 14)){
         sprite.input.enableSnap(32, 32, false, true);
 
-        var x = Math.floor((spriteX - positionX)/32);
-        var y = Math.floor((spriteY - positionY)/32);   
+        var x = Math.floor((spriteX - prepareFieldPosX)/32);
+        var y = Math.floor((spriteY - prepareFieldPosY)/32);   
 
         addShipToAreaMatrix(sprite, x, y); 
         alert('x:' + x.toString() + ' y:' + y.toString());  
@@ -148,8 +181,8 @@ function mouseClicked(sprite, pointer) {
 }
 
 function calculateClickCoordinate(clickPosX, clickPosY){
-    var x = Math.floor((clickPosX - positionX)/32);
-    var y = Math.floor((clickPosY - positionY)/32);
+    var x = Math.floor((clickPosX - prepareFieldPosX)/32);
+    var y = Math.floor((clickPosY - prepareFieldPosY)/32);
 
     //here need send click coordinate to server
     
