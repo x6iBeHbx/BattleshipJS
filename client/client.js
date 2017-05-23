@@ -1,4 +1,11 @@
 document.oncontextmenu = function (){return false};
+
+// var socket = io('http://localhost:3030');
+//   socket.on('connect', function(){});
+//   socket.on('event', function(data){});
+//   socket.on('disconnect', function(){});
+
+var socket = io();
 // ------------------ MAIN-------------------------------------
 var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {preload: preload, create:create});
 
@@ -25,6 +32,7 @@ var ship4;
 var ship3_1;
 var ship3_1;
 var ship3_1;
+
 
 function loadBattleField(){
     var img = game.load.image('area', 'assets/area.png');
@@ -166,13 +174,13 @@ function chooseByRotate(count, sprite, x, y){
 
 function putShipByY(count, x, y){
     for(i=0; i < count; i++){
-        areaMatrix[x][y + i] = 1;
+        playerBattleMatrix[x][y + i] = 1;
     }
 }
 
 function putShipByX(count, x, y){
     for(i=0; i < count; i++){
-        areaMatrix[x + i][y] = 1;
+        playerBattleMatrix[x + i][y] = 1;
     }
 }
 
