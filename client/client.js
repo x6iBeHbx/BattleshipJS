@@ -65,9 +65,8 @@ function addPrepareFieldToStage(){
 }
 
 function createShips(){
-        
-        addShipToArea();
-        prepareField.events.onInputDown.add(mouseClicked, this);
+    addShipToArea();
+    prepareField.events.onInputDown.add(mouseClicked, this);
 }
 
 function addShipToArea(){
@@ -90,12 +89,12 @@ function addShipToArea(){
     
     ships = [ship4_1, ship3_1, ship3_2, ship2_1, ship2_2, ship2_3, ship1_1, ship1_2, ship1_3, ship1_4];
 
-    addLestenerToShips();
+    addListenerToShips();
     readyForBattleBtn.inputEnabled = true;
     readyForBattleBtn.events.onInputDown.add(readyForBattleBtnClicked, this);
 }
 
-function addLestenerToShips(){
+function addListenerToShips(){
 
     for(var i = 0; i < ships.length; i++){
         ships[i].inputEnabled = true;
@@ -129,8 +128,8 @@ function onShipMouseUp(sprite, pointer) {
 }
 
 function leftMouseBtnUp(sprite, pointer){
-    var x = Math.floor((sprite.x - prepareFieldPosX)/blockLength);
-    var y = Math.floor((sprite.y - prepareFieldPosY)/blockLength);
+    var x = Math.round((sprite.x - prepareFieldPosX)/blockLength);
+    var y = Math.round((sprite.y - prepareFieldPosY)/blockLength);
 
     var spriteX;
     var spriteY;
@@ -149,18 +148,23 @@ function leftMouseBtnUp(sprite, pointer){
     }
     
     
-    if(spriteX >= 128 && spriteY >= 128 && (spriteX + spriteWidth) < (128 + 320 + blockLength/2) && (spriteY + spriteHeight) < (128 + 320 + blockLength/2)){
-        shipsOnPosition++;
-        sprite.input.enableSnap(blockLength, blockLength, false, true);
+    if(spriteX >= 128 && spriteY >= 128 && 
+        (spriteX + spriteWidth) < (128 + 320 + blockLength/2) && 
+        (spriteY + spriteHeight) < (128 + 320 + blockLength/2) &&
+        isPositionFreeForShip(getShipLengthByKey(sprite), sprite, x, y)){
 
-        var x = Math.floor((spriteX - prepareFieldPosX)/blockLength);
-        var y = Math.floor((spriteY - prepareFieldPosY)/blockLength);   
-        alert(isPositionFreeForShip(ship4Length, sprite, x, y));
+        if(!sprite.onBattleField){
+            shipsOnPosition++;
+        }
+        
+        sprite.input.enableSnap(blockLength, blockLength, false, true);
         sprite.onBattleField = true;
         addShipToBattleFieldMatrix(sprite, x, y); 
-        //alert('x:' + x.toString() + ' y:' + y.toString());  
     }else {
-        shipsOnPosition--;
+        if(sprite.onBattleField){
+            shipsOnPosition--;
+        }
+        
         sprite.onBattleField = false;
         sprite.x = 500;
         sprite.y = 500;
@@ -186,6 +190,21 @@ function rightMouseBtnDown(sprite, pointer){
 function readyForBattleBtnClicked(sprite, pointer){
     //нужно подключить логику когда если корабль на поле и я на негокликаю то при маус даун происходит -1 к количеству кораблей на поле
     if(shipsOnPosition >= ships.length){
+        var readyForBattleProtocol = {
+            player: "Andrey",
+            level: 2,
+            shipsInfo: [
+                {   
+                    key:"ship4",
+                    shipLength: 4,
+                    x: 0,
+                    y: 0,
+                    isRotate: false 
+                }
+            ]
+        };
+
+        socket.emit('clientEvent', readyForBattleProtocol);
         alert("Карсава ждем противника!");
     }else {
         alert("Нужно поставить на поле все корабли!!!");
@@ -193,20 +212,8 @@ function readyForBattleBtnClicked(sprite, pointer){
 }
 
 function addShipToBattleFieldMatrix(sprite, x, y){
-    switch(sprite.key){
-        case "ship4":
-            imposeByRotate(ship4Length, sprite, x, y);
-            break;
-        case "ship3":
-            imposeByRotate(ship3Length, sprite, x, y);
-            break;
-        case "ship2":
-            imposeByRotate(ship2Length, sprite, x, y);
-            break;
-        case "ship1":
-            imposeByRotate(ship1Length, sprite, x, y);
-            break;
-    }
+    
+    imposeByRotate(getShipLengthByKey(sprite), sprite, x, y);
 }
 
 function clearShipFromBattleFieldMatrix(sprite, x, y){
@@ -225,10 +232,29 @@ function clearShipFromBattleFieldMatrix(sprite, x, y){
             break;
     }
 }
+
+function getShipLengthByKey(sprite){
+    var result;
+    switch(sprite.key){
+        case "ship4":
+            result = ship4Length;
+            break;
+        case "ship3":
+            result = ship3Length;
+            break;
+        case "ship2":
+            result = ship2Length;
+            break;
+        case "ship1":
+            result = ship1Length;
+            break;
+    }
+    return result;
+}
 //---------------------------------------------------------------------
 function imposeByRotate(count, sprite, x, y){
     if(sprite.isRotate){
-        imposeShipByY(count, sprite, x, y);
+        imposeShipByY(count, sprite, x - 1, y);
     }else{
         imposeShipByX(count, sprite, x, y);
     }

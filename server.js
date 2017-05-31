@@ -22,6 +22,14 @@ io.on('connection', function(socket){
     console.log('A user disconnected');
   });
 
+  socket.on('readyForBattle', function () {
+    console.log('A user disconnected');
+  });
+
+  socket.on('clientEvent', function(data) {
+    console.log(data.player);
+  });
+
 });
 
 http.listen(port, function(){
